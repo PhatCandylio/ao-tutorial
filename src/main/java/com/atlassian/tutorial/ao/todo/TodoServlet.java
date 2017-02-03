@@ -15,16 +15,13 @@ import java.io.PrintWriter;
 
 import static com.google.common.base.Preconditions.*;
 
-@Scanned
 public final class TodoServlet extends HttpServlet
 {
-    @ComponentImport
-    private final ActiveObjects ao;
+    private final TodoService todoService;
 
-    @Inject
-    public TodoServlet(ActiveObjects ao)
+    public TodoServlet(TodoService todoService)
     {
-        this.ao = checkNotNull(ao);
+        this.todoService = checkNotNull(todoService);
     }
 
     @Override
@@ -42,18 +39,10 @@ public final class TodoServlet extends HttpServlet
 
         w.write("<ol>");
 
-        ao.executeInTransaction(new TransactionCallback<Void>() // (1)
+        for (Todo todo : todoService.all()) // (2)
         {
-            @Override
-            public Void doInTransaction()
-            {
-                for (Todo todo : ao.find(Todo.class)) // (2)
-                {
-                    w.printf("<li><%2$s> %s </%2$s></li>", todo.getDescription(), todo.isComplete() ? "strike" : "strong");
-                }
-                return null;
-            }
-        });
+            w.printf("<li><%2$s> %s </%2$s></li>", todo.getDescription(), todo.isComplete() ? "strike" : "strong");
+        }
 
         w.write("</ol>");
         w.write("<script language='javascript'>document.forms[0].elements[0].focus();</script>");
@@ -65,19 +54,7 @@ public final class TodoServlet extends HttpServlet
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException
     {
         final String description = req.getParameter("task");
-        ao.executeInTransaction(new TransactionCallback<Todo>() // (1)
-        {
-            @Override
-            public Todo doInTransaction()
-            {
-                final Todo todo = ao.create(Todo.class); // (2)
-                todo.setDescription(description); // (3)
-                todo.setComplete(false);
-                todo.save(); // (4)
-                return todo;
-            }
-        });
-
+        todoService.add(description);
         res.sendRedirect(req.getContextPath() + "/plugins/servlet/todo/list");
     }
 }
