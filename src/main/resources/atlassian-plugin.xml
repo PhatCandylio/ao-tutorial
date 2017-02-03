@@ -20,5 +20,14 @@
 
         <context>ao-tutorial</context>
     </web-resource>
-    
+
+    <ao key="ao-module">
+        <description>The module configuring the Active Objects service used by this plugin</description>
+        <entity>com.atlassian.tutorial.ao.todo.Todo</entity>
+    </ao>
+
+    <servlet name="Todo List &amp; Add Servlet" class="com.atlassian.tutorial.ao.todo.TodoServlet" key="todo-list">
+        <description>A servlet to add and list todos</description>
+        <url-pattern>/todo/list</url-pattern>
+    </servlet>
 </atlassian-plugin>
