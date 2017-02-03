@@ -19,6 +19,18 @@
     <packaging>atlassian-plugin</packaging>
 
     <dependencies>
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>1.8.0.10</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.activeobjects</groupId>
+            <artifactId>activeobjects-test</artifactId>
+            <version>${ao.version}</version>
+            <scope>test</scope>
+        </dependency>
         <!-- Google Collections, useful utilities for manipulating collections -->
         <dependency>
             <groupId>com.google.collections</groupId>
@@ -72,7 +84,15 @@
 
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.6.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- WIRED TEST RUNNER DEPENDENCIES -->
