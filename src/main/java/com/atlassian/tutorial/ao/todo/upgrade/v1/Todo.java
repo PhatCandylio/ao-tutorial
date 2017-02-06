@@ -1,4 +1,4 @@
-package com.atlassian.tutorial.ao.todo;
+package com.atlassian.tutorial.ao.todo.upgrade.v1;
 
 import net.java.ao.Entity;
 import net.java.ao.Preload;

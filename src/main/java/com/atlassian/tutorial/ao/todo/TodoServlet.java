@@ -1,9 +1,8 @@
 package com.atlassian.tutorial.ao.todo;
 
-import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
-import com.atlassian.sal.api.transaction.TransactionCallback;
+import com.atlassian.sal.api.user.UserManager;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -15,20 +14,30 @@ import java.io.PrintWriter;
 
 import static com.google.common.base.Preconditions.*;
 
+@Scanned
 public final class TodoServlet extends HttpServlet
 {
     private final TodoService todoService;
+    @ComponentImport
+    private final UserManager userManager; // (1)
 
-    public TodoServlet(TodoService todoService)
+    @Inject
+    public TodoServlet(TodoService todoService, UserManager userManager)
     {
         this.todoService = checkNotNull(todoService);
+        this.userManager = checkNotNull(userManager);
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException
     {
+        if (!enforceLoggedIn(req, res)) // (2)
+        {
+            return;
+        }
+
         final PrintWriter w = res.getWriter();
-        w.write("<h1>Todos</h1>");
+        w.printf("<h1>Todos (%s)</h1>", userManager.getRemoteUser().getUsername());
 
         // the form to post more TODOs
         w.write("<form method=\"post\">");
@@ -39,7 +48,7 @@ public final class TodoServlet extends HttpServlet
 
         w.write("<ol>");
 
-        for (Todo todo : todoService.all()) // (2)
+        for (Todo todo : todoService.all())
         {
             w.printf("<li><%2$s> %s </%2$s></li>", todo.getDescription(), todo.isComplete() ? "strike" : "strong");
         }
@@ -53,8 +62,23 @@ public final class TodoServlet extends HttpServlet
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException
     {
+        if (!enforceLoggedIn(req, res)) // (2)
+        {
+            return;
+        }
+
         final String description = req.getParameter("task");
         todoService.add(description);
         res.sendRedirect(req.getContextPath() + "/plugins/servlet/todo/list");
+    }
+
+    private boolean enforceLoggedIn(HttpServletRequest req, HttpServletResponse res) throws IOException
+    {
+        if (userManager.getRemoteUser() == null)  // (3)
+        {
+            res.sendRedirect(req.getContextPath() + "/plugins/servlet/login");
+            return false;
+        }
+        return true;
     }
 }

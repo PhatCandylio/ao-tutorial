@@ -165,6 +165,7 @@
                         <!-- Ensure plugin is spring powered -->
                         <Spring-Context>*</Spring-Context>
                     </instructions>
+                    <log4jProperties>src/test/resources/log4j.properties</log4jProperties>
                 </configuration>
             </plugin>
 
@@ -203,6 +204,7 @@
 
         <!-- This key is used to keep the consistency between the key in atlassian-plugin.xml and the key to generate bundle. -->
         <atlassian.plugin.key>${project.groupId}.${project.artifactId}</atlassian.plugin.key>
+        <maven.test.skip>true</maven.test.skip>
     </properties>
 
 </project>
