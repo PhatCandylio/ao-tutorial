@@ -19,7 +19,7 @@ public final class TodoServlet extends HttpServlet
 {
     private final TodoService todoService;
     @ComponentImport
-    private final UserManager userManager; // (1)
+    private final UserManager userManager;
 
     @Inject
     public TodoServlet(TodoService todoService, UserManager userManager)
@@ -31,7 +31,7 @@ public final class TodoServlet extends HttpServlet
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException
     {
-        if (!enforceLoggedIn(req, res)) // (2)
+        if (!enforceLoggedIn(req, res))
         {
             return;
         }
@@ -62,7 +62,7 @@ public final class TodoServlet extends HttpServlet
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException
     {
-        if (!enforceLoggedIn(req, res)) // (2)
+        if (!enforceLoggedIn(req, res))
         {
             return;
         }
@@ -74,7 +74,7 @@ public final class TodoServlet extends HttpServlet
 
     private boolean enforceLoggedIn(HttpServletRequest req, HttpServletResponse res) throws IOException
     {
-        if (userManager.getRemoteUser() == null)  // (3)
+        if (userManager.getRemoteUser() == null)
         {
             res.sendRedirect(req.getContextPath() + "/plugins/servlet/login");
             return false;

@@ -4,6 +4,8 @@ import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.user.UserManager;
+import com.google.common.collect.ImmutableMap;
+import net.java.ao.DBParam;
 import net.java.ao.Query;
 
 import javax.inject.Inject;
@@ -20,7 +22,7 @@ public class TodoServiceImpl implements TodoService
     @ComponentImport
     private final ActiveObjects ao;
     @ComponentImport
-    private final UserManager userManager; // (1)
+    private final UserManager userManager;
 
     @Inject
     public TodoServiceImpl(ActiveObjects ao, UserManager userManager)
@@ -32,10 +34,10 @@ public class TodoServiceImpl implements TodoService
     @Override
     public Todo add(String description)
     {
-        final Todo todo = ao.create(Todo.class);
+        User user = getOrCreateUser(ao, currentUserName());
+        final Todo todo = ao.create(Todo.class, new DBParam("USER_ID", user.getID()));
         todo.setDescription(description);
         todo.setComplete(false);
-        todo.setUserName(currentUserName()); // (2)
         todo.save();
         return todo;
     }
@@ -43,11 +45,29 @@ public class TodoServiceImpl implements TodoService
     @Override
     public List<Todo> all()
     {
-        return newArrayList(ao.find(Todo.class, Query.select().where("USER_NAME = ?", currentUserName()))); // (3)
+        User user = getOrCreateUser(ao, currentUserName());
+        return newArrayList(ao.find(Todo.class, Query.select().where("USER_ID = ?", user.getID())));
     }
 
     private String currentUserName() {
         return userManager.getRemoteUser().getUsername();
+    }
+
+    private User getOrCreateUser(ActiveObjects ao, String userName)
+    {
+        User[] users = ao.find(User.class, Query.select().where("NAME = ?", userName));
+        if (users.length == 0) {
+            return createUser(ao, userName);
+        } else if (users.length == 1) {
+            return users[0];
+        } else {
+            throw new IllegalStateException("There shouldn't be 2 users with the same username! " + userName);
+        }
+    }
+
+    private User createUser(ActiveObjects ao, String userName)
+    {
+        return ao.create(User.class, ImmutableMap.<String, Object>of("NAME", userName));
     }
 
 }
