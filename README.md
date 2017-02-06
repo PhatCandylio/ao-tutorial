@@ -7,4 +7,6 @@ This is the source repository for the following tutorials:
 These two tutorials comprise of 6 stages.
 Each stage has been tagged in this repository, e.g. to see the progress at the
 end of stage 3, do:
-> git checkout stage3
+```
+git checkout stage3
+```
