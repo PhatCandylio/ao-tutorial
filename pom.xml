@@ -137,13 +137,13 @@
         <plugins>
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
-                <artifactId>maven-refapp-plugin</artifactId>
+                <artifactId>jira-maven-plugin</artifactId>
                 <version>${amps.version}</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <productVersion>${refapp.version}</productVersion>
+                    <productVersion>${jira.version}</productVersion>
+                    <productDataVersion>${jira.version}</productDataVersion>
                     <enableQuickReload>true</enableQuickReload>
-                    <enableFastdev>false</enableFastdev>
 
                     <!-- See here for an explanation of default instructions: -->
                     <!-- https://developer.atlassian.com/docs/advanced-topics/configuration-of-instructions-in-atlassian-plugins -->
@@ -195,16 +195,41 @@
     </build>
     
     <properties>
+        <sal.version>3.0.3</sal.version>
         <ao.version>1.2.3</ao.version>
         <platform.version>3.0.0</platform.version>
         <refapp.version>3.3.6</refapp.version>
-        <amps.version>6.2.11</amps.version>
-        <plugin.testrunner.version>1.2.3</plugin.testrunner.version>
-        <atlassian.spring.scanner.version>1.2.13</atlassian.spring.scanner.version>
+
 
         <!-- This key is used to keep the consistency between the key in atlassian-plugin.xml and the key to generate bundle. -->
-        <atlassian.plugin.key>${project.groupId}.${project.artifactId}</atlassian.plugin.key>
+        <atlassian.plugin.key>com.atlassian.tutorial.ao.todo.ao-tutorial</atlassian.plugin.key>
         <maven.test.skip>true</maven.test.skip>
+
+        <plugin.testrunner.version>2.0.1</plugin.testrunner.version>
+        <jira.version>7.3.0</jira.version>
+        <atlassian.fugue.version>2.5.0</atlassian.fugue.version>
+        <atlassian.spring.scanner.version>1.2.13</atlassian.spring.scanner.version>
+        <quick.reload.version>1.19</quick.reload.version>
+        <amps.version>8.0.2</amps.version>
+        <activeobjects.version>1.2.3</activeobjects.version>
+
+        <!-- Encoding settings -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- this is specified in base-pom and is used to specify the Java Version for this plugin -->
+        <jdkLevel>1.8</jdkLevel>
+
+        <!-- maven-compiler-plugin config -->
+        <maven.compiler.source>${jdkLevel}</maven.compiler.source>
+        <maven.compiler.target>${jdkLevel}</maven.compiler.target>
+        <sal.version>3.0.3</sal.version>
+
+        <containerId>tomcat8x</containerId>
+
+        <jvm.args.custom/> <!-- Allows to specify custom arguments in build scripts -->
+        <jvm.args.xmx>512m</jvm.args.xmx>
+        <jvm.args>-Xmx${jvm.args.xmx} ${jvm.args.custom}</jvm.args>
     </properties>
 
 </project>
